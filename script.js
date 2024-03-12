@@ -1,11 +1,11 @@
-let main = document.querySelector('.main')
-apiGeo = 'at_KghkjRa3LNdLxylRs86PX0n4ax0a6'
+let main = document.querySelector('.main');
+// apiGeo = 'at_KghkjRa3LNdLxylRs86PX0n4ax0a6'
 let api = '1d8b4ab823a40ae25b3463bc8d0962a3';
 
 getForecast()
 async function getForecast() {
     let lat, lon;
-    navigator.geolocation.getCurrentPosition(success)
+    navigator.geolocation.getCurrentPosition(success, error)
     function success(res) {
         lat = res.coords.latitude;
         lon = res.coords.longitude;
@@ -15,6 +15,18 @@ async function getForecast() {
     city(geoData.name)
 }
 
+async function error() {
+    console.log('error');
+    let myIP = await fetch('https://api.ipify.org/?format=json')
+    let myIPjson = await myIP.json()
+    getLocation(myIPjson.ip)
+}
+
+async function getLocation(ip) {
+    let geoFromIP  = await fetch(`https://geo.ipify.org/api/v2/country,city?apiKey=at_KghkjRa3LNdLxylRs86PX0n4ax0a6&ipAddress=${ip}`)
+    let geoFromIPjson = await geoFromIP.json()
+    city(geoFromIPjson.location.city);
+}
 
 main.addEventListener('click', function(e) {
     if (e.target.closest('.search__button')) {
